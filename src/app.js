@@ -46,7 +46,7 @@ async function initHeroCanvas() {
 
   const dpr = window.devicePixelRatio || 1;
   const ctx = canvas.getContext('2d');
-  const TEXT = 'AI가 UI 구조를 쉽게 해석하고 효율적으로 수정할 수 있도록 돕는 도구입니다.';
+  const TEXT = 'AI가 UI를 더 쉽게 해석하고 수정하도록 돕습니다.';
   const LINE_HEIGHT_RATIO = 1.35;
   const CHAR_DELAY_MS = 38;
 
@@ -274,3 +274,110 @@ function initPanelTilt() {
 
 initParticleBg();
 initPanelTilt();
+
+// --- Footer explosion + GitHub link ---
+function triggerExplosion(cx, cy, onComplete) {
+  const canvas = document.createElement('canvas');
+  Object.assign(canvas.style, {
+    position: 'fixed', top: '0', left: '0',
+    width: '100%', height: '100%',
+    pointerEvents: 'none', zIndex: '99999',
+  });
+  document.body.appendChild(canvas);
+
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.round(window.innerWidth * dpr);
+  canvas.height = Math.round(window.innerHeight * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const COLORS = ['#22c55e', '#86efac', '#4ade80', '#bbf7d0', '#ffffff', '#a3e635', '#f0fdf4'];
+  const particles = [];
+
+  // burst particles
+  for (let i = 0; i < 60; i++) {
+    const angle = (Math.PI * 2 * i) / 60 + (Math.random() - 0.5) * 0.4;
+    const speed = 2.5 + Math.random() * 9;
+    particles.push({
+      x: cx, y: cy,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 1.5,
+      size: 1.8 + Math.random() * 4.5,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      life: 1,
+      decay: 0.018 + Math.random() * 0.022,
+      spark: Math.random() < 0.35,
+    });
+  }
+
+  // shockwave ring state
+  let ringR = 0, ringAlpha = 0.8;
+
+  function animate() {
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+    // shockwave
+    if (ringAlpha > 0) {
+      ringR += 12;
+      ringAlpha -= 0.055;
+      ctx.beginPath();
+      ctx.arc(cx, cy, ringR, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(34,197,94,${Math.max(0, ringAlpha)})`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    let alive = false;
+    for (const p of particles) {
+      if (p.life <= 0) continue;
+      alive = true;
+      p.vy += 0.2;   // gravity
+      p.vx *= 0.975; // drag
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= p.decay;
+
+      const a = Math.max(0, p.life);
+      ctx.globalAlpha = a;
+
+      if (p.spark) {
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p.x - p.vx * 2.8, p.y - p.vy * 2.8);
+        ctx.strokeStyle = p.color;
+        ctx.lineWidth = p.size * 0.45;
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * a, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+      }
+    }
+
+    ctx.globalAlpha = 1;
+
+    if (alive || ringAlpha > 0) {
+      requestAnimationFrame(animate);
+    } else {
+      document.body.removeChild(canvas);
+    }
+  }
+
+  requestAnimationFrame(animate);
+  setTimeout(onComplete, 380);
+}
+
+function initFooterExplosion() {
+  const link = document.getElementById('github-link');
+  if (!link) return;
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const r = link.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+    triggerExplosion(cx, cy, () => window.open('https://github.com/blackjune67', '_blank', 'noopener'));
+  });
+}
+
+initFooterExplosion();
