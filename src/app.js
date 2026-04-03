@@ -37,6 +37,20 @@ wireCopyButton(copyUrlButton, injectUrl, 'Inject URL 복사');
 const userscriptBlob = new Blob([userscriptCode], { type: 'text/javascript;charset=utf-8' });
 downloadUserscriptLink.href = URL.createObjectURL(userscriptBlob);
 
+function initButtonEffects() {
+  document.querySelectorAll('.button').forEach(button => {
+    button.addEventListener('click', event => {
+      const rect = button.getBoundingClientRect();
+      const cx = Number.isFinite(event.clientX) ? event.clientX : rect.left + rect.width / 2;
+      const cy = Number.isFinite(event.clientY) ? event.clientY : rect.top + rect.height / 2;
+
+      triggerExplosion(cx, cy, {
+        preset: 'button',
+      });
+    });
+  });
+}
+
 // --- Hero canvas: typewriter animation via @chenglou/pretext ---
 async function initHeroCanvas() {
   await document.fonts.ready;
@@ -144,6 +158,7 @@ async function initHeroCanvas() {
 }
 
 initHeroCanvas();
+initButtonEffects();
 
 // --- Background dot grid: spring-repel + constellation lines ---
 function initParticleBg() {
@@ -275,8 +290,17 @@ function initPanelTilt() {
 initParticleBg();
 initPanelTilt();
 
-// --- Footer explosion + GitHub link ---
-function triggerExplosion(cx, cy, onComplete) {
+// --- Shared click explosion effects ---
+function triggerExplosion(cx, cy, options = {}) {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    options.onComplete?.();
+    return;
+  }
+
+  const {
+    preset = 'footer',
+    onComplete,
+  } = options;
   const canvas = document.createElement('canvas');
   Object.assign(canvas.style, {
     position: 'fixed', top: '0', left: '0',
@@ -291,39 +315,61 @@ function triggerExplosion(cx, cy, onComplete) {
   canvas.height = Math.round(window.innerHeight * dpr);
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-  const COLORS = ['#22c55e', '#86efac', '#4ade80', '#bbf7d0', '#ffffff', '#a3e635', '#f0fdf4'];
+  const effectPresets = {
+    button: {
+      colors: ['#22c55e', '#4ade80', '#86efac', '#dcfce7', '#ffffff', '#67e8f9'],
+      particleCount: 42 + Math.floor(Math.random() * 26),
+      speedMin: 2.8,
+      speedMax: 10.5,
+      ringGrowth: 14 + Math.random() * 6,
+      ringAlpha: 0.92,
+      ringDecay: 0.065,
+      gravity: 0.16,
+      sparkChance: 0.48,
+    },
+    footer: {
+      colors: ['#22c55e', '#86efac', '#4ade80', '#bbf7d0', '#ffffff', '#a3e635', '#f0fdf4'],
+      particleCount: 60,
+      speedMin: 2.5,
+      speedMax: 11.5,
+      ringGrowth: 12,
+      ringAlpha: 0.8,
+      ringDecay: 0.055,
+      gravity: 0.2,
+      sparkChance: 0.35,
+    },
+  };
+  const config = effectPresets[preset] ?? effectPresets.footer;
   const particles = [];
 
-  // burst particles
-  for (let i = 0; i < 60; i++) {
-    const angle = (Math.PI * 2 * i) / 60 + (Math.random() - 0.5) * 0.4;
-    const speed = 2.5 + Math.random() * 9;
+  for (let i = 0; i < config.particleCount; i += 1) {
+    const angle = (Math.PI * 2 * i) / config.particleCount + (Math.random() - 0.5) * 0.55;
+    const speed = config.speedMin + Math.random() * (config.speedMax - config.speedMin);
     particles.push({
       x: cx, y: cy,
       vx: Math.cos(angle) * speed,
       vy: Math.sin(angle) * speed - 1.5,
       size: 1.8 + Math.random() * 4.5,
-      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      color: config.colors[Math.floor(Math.random() * config.colors.length)],
       life: 1,
       decay: 0.018 + Math.random() * 0.022,
-      spark: Math.random() < 0.35,
+      spark: Math.random() < config.sparkChance,
     });
   }
 
-  // shockwave ring state
-  let ringR = 0, ringAlpha = 0.8;
+  let ringR = 0;
+  let ringAlpha = config.ringAlpha;
 
   function animate() {
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-    // shockwave
     if (ringAlpha > 0) {
-      ringR += 12;
-      ringAlpha -= 0.055;
+      ringR += config.ringGrowth;
+      ringAlpha -= config.ringDecay;
       ctx.beginPath();
       ctx.arc(cx, cy, ringR, 0, Math.PI * 2);
       ctx.strokeStyle = `rgba(34,197,94,${Math.max(0, ringAlpha)})`;
-      ctx.lineWidth = 2;
+      ctx.lineWidth = preset === 'button' ? 2.6 : 2;
       ctx.stroke();
     }
 
@@ -331,8 +377,8 @@ function triggerExplosion(cx, cy, onComplete) {
     for (const p of particles) {
       if (p.life <= 0) continue;
       alive = true;
-      p.vy += 0.2;   // gravity
-      p.vx *= 0.975; // drag
+      p.vy += config.gravity;
+      p.vx *= preset === 'button' ? 0.968 : 0.975;
       p.x += p.vx;
       p.y += p.vy;
       p.life -= p.decay;
@@ -365,7 +411,9 @@ function triggerExplosion(cx, cy, onComplete) {
   }
 
   requestAnimationFrame(animate);
-  setTimeout(onComplete, 380);
+  if (onComplete) {
+    setTimeout(onComplete, preset === 'button' ? 220 : 380);
+  }
 }
 
 function initFooterExplosion() {
@@ -376,7 +424,10 @@ function initFooterExplosion() {
     const r = link.getBoundingClientRect();
     const cx = r.left + r.width / 2;
     const cy = r.top + r.height / 2;
-    triggerExplosion(cx, cy, () => window.open('https://github.com/blackjune67', '_blank', 'noopener'));
+    triggerExplosion(cx, cy, {
+      preset: 'footer',
+      onComplete: () => window.open('https://github.com/blackjune67', '_blank', 'noopener'),
+    });
   });
 }
 
