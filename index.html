@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>스마틱스 UI 도우미</title>
+    <script type="module" src="/src/app.js"></script>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f4f7fb;
+        --panel: #ffffff;
+        --border: #d9e2ec;
+        --text: #122033;
+        --muted: #5c6b7c;
+        --primary: #2563eb;
+        --primary-strong: #1d4ed8;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", "Noto Sans KR", sans-serif;
+        background:
+          radial-gradient(circle at top right, rgba(37, 99, 235, 0.15), transparent 25%),
+          linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+        color: var(--text);
+      }
+
+      main {
+        max-width: 920px;
+        margin: 48px auto;
+        padding: 0 24px;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        box-shadow: 0 12px 36px rgba(15, 23, 42, 0.08);
+        padding: 28px;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: 28px;
+      }
+
+      p,
+      li {
+        line-height: 1.6;
+        color: var(--muted);
+      }
+
+      ol {
+        padding-left: 20px;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 24px 0 16px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 0 16px;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        background: var(--primary);
+        color: #fff;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .button:hover {
+        background: var(--primary-strong);
+      }
+
+      .button.secondary {
+        background: #eef2ff;
+        border-color: #c7d2fe;
+        color: #1e3a8a;
+      }
+
+      .field {
+        margin-top: 16px;
+      }
+
+      .field label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
+
+      textarea,
+      input[type="text"] {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: #fff;
+        color: var(--text);
+        font: inherit;
+      }
+
+      code {
+        font-family: Consolas, "Courier New", monospace;
+      }
+
+      .hint {
+        font-size: 14px;
+      }
+
+      .credit {
+        margin-top: 20px;
+        font-size: 13px;
+        color: #7a8797;
+        text-align: right;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="panel">
+        <h1>스마틱스 UI 도우미</h1>
+        <p>
+          호스트 프로젝트를 수정하지 않고 로컬 웹 페이지에 <code>agent-ui-annotation</code> 툴바를 주입할 수 있는
+          내부 전용 독립 도구입니다.
+        </p>
+
+        <ol>
+          <li>이 도구를 로컬에서 실행합니다.</li>
+          <dl>[npm i 실행 후 npm run dev 실행]</dl>
+          <li>아래 북마클릿복사 또는 Inject URL을 복사합니다.</li>
+          <li>사용하고 싶은 싶은 로컬 웹 페이지를 엽니다.</li>
+          <li>개발자도구(F12)를 열고 북마클릿에서 복사된 코드를 실행합니다.</li>
+        </ol>
+
+        <div class="actions">
+          <a id="bookmarklet-link" class="button" href="#">북마클릿</a>
+          <button id="copy-bookmarklet" class="button secondary" type="button">북마클릿 복사</button>
+          <button id="copy-url" class="button secondary" type="button">Inject URL 복사</button>
+        </div>
+
+        <div class="field">
+          <label for="inject-url">Inject URL</label>
+          <input id="inject-url" type="text" readonly />
+        </div>
+
+        <div class="field">
+          <label for="bookmarklet-code">북마클릿 코드</label>
+          <textarea id="bookmarklet-code" rows="6" readonly></textarea>
+        </div>
+
+        <p class="hint">
+          CSP가 강한 페이지는 외부 module script 주입을 차단할 수 있습니다. 이 경우 해당 페이지에서는 툴바가
+          로드되지 않을 수 있습니다.
+        </p>
+
+        <p class="credit">made by hajune</p>
+      </section>
+    </main>
+  </body>
+</html>
