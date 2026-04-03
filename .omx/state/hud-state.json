@@ -1,5 +1,5 @@
 {
-  "last_turn_at": "2026-04-03T11:15:08.651Z",
-  "turn_count": 3,
-  "last_agent_output": "{\"title\":\"새로고침 시 agentation 초기화 방지\"}"
+  "last_turn_at": "2026-04-03T11:46:58.890Z",
+  "turn_count": 13,
+  "last_agent_output": "[index.html](/d:/Repository/agent-ui-sidecar/index.html) 내용을 다시 복구했습니다. 빠졌던 `사전 준비`, `Tampermonkey 설"
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildBookmarkletCode, buildInjectUrl } from '../../src/lib/bookmarklet.js';
+import { buildBookmarkletCode, buildInjectUrl, buildUserscriptCode } from '../../src/lib/bookmarklet.js';
 import { buildPageContext } from '../../src/lib/context.js';
 
 describe('bookmarklet helpers', () => {
@@ -14,6 +14,19 @@ describe('bookmarklet helpers', () => {
     expect(bookmarkletCode).toContain("__agent-ui-sidecar-loader__");
     expect(bookmarkletCode).toContain("type='module'");
     expect(bookmarkletCode).toContain("http://127.0.0.1:4174/inject.js?t='+Date.now()");
+  });
+
+  it('builds a userscript that reinstalls the loader on every page load', () => {
+    const userscriptCode = buildUserscriptCode('http://127.0.0.1:4174/inject.js');
+
+    expect(userscriptCode).toContain('// ==UserScript==');
+    expect(userscriptCode).toContain('// @match        http://*/*');
+    expect(userscriptCode).toContain('// @match        https://*/*');
+    expect(userscriptCode).toContain('// @exclude      http://127.0.0.1:4174/*');
+    expect(userscriptCode).toContain('// @run-at       document-end');
+    expect(userscriptCode).toContain("var injectUrl = 'http://127.0.0.1:4174/inject.js';");
+    expect(userscriptCode).toContain("s.src = injectUrl + '?t=' + Date.now();");
+    expect(userscriptCode).toContain('document.addEventListener(');
   });
 });
 

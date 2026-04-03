@@ -3,18 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>스마틱스 UI 도우미</title>
+    <title>Agent UI Sidecar</title>
     <script type="module" src="/src/app.js"></script>
     <style>
       :root {
         color-scheme: light;
         --bg: #f4f7fb;
         --panel: #ffffff;
+        --panel-accent: #eff6ff;
         --border: #d9e2ec;
         --text: #122033;
-        --muted: #5c6b7c;
+        --muted: #526173;
         --primary: #2563eb;
         --primary-strong: #1d4ed8;
+        --success-bg: #ecfeff;
+        --success-border: #a5f3fc;
+        --success-text: #155e75;
       }
 
       * {
@@ -25,149 +29,290 @@
         margin: 0;
         font-family: "Segoe UI", "Noto Sans KR", sans-serif;
         background:
-          radial-gradient(circle at top right, rgba(37, 99, 235, 0.15), transparent 25%),
+          radial-gradient(circle at top right, rgba(37, 99, 235, 0.14), transparent 24%),
           linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
         color: var(--text);
       }
 
       main {
-        max-width: 920px;
+        max-width: 1080px;
         margin: 48px auto;
-        padding: 0 24px;
+        padding: 0 24px 48px;
+      }
+
+      .hero {
+        margin-bottom: 20px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        min-height: 30px;
+        padding: 0 12px;
+        border-radius: 999px;
+        background: rgba(37, 99, 235, 0.12);
+        color: var(--primary-strong);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 14px 0 12px;
+        font-size: clamp(32px, 6vw, 48px);
+        line-height: 1.05;
+      }
+
+      p,
+      li {
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      .lead {
+        max-width: 760px;
+        font-size: 18px;
+      }
+
+      .grid {
+        display: grid;
+        gap: 20px;
+      }
+
+      @media (min-width: 900px) {
+        .grid {
+          grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+        }
       }
 
       .panel {
         background: var(--panel);
         border: 1px solid var(--border);
-        border-radius: 18px;
-        box-shadow: 0 12px 36px rgba(15, 23, 42, 0.08);
+        border-radius: 22px;
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
         padding: 28px;
       }
 
-      h1 {
-        margin: 0 0 12px;
-        font-size: 28px;
+      .panel.recommended {
+        background:
+          linear-gradient(180deg, rgba(239, 246, 255, 0.9), rgba(255, 255, 255, 0.98));
       }
 
-      p,
-      li {
-        line-height: 1.6;
-        color: var(--muted);
+      .panel h2 {
+        margin: 0 0 10px;
+        font-size: 24px;
       }
 
-      ol {
-        padding-left: 20px;
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 0 10px;
+        border-radius: 999px;
+        background: var(--success-bg);
+        border: 1px solid var(--success-border);
+        color: var(--success-text);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
       }
 
       .actions {
         display: flex;
         flex-wrap: wrap;
         gap: 12px;
-        margin: 24px 0 16px;
+        margin: 20px 0 16px;
       }
 
       .button {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-height: 44px;
+        min-height: 46px;
         padding: 0 16px;
         border: 1px solid transparent;
-        border-radius: 10px;
+        border-radius: 12px;
         background: var(--primary);
         color: #fff;
-        font-weight: 600;
+        font-weight: 700;
         text-decoration: none;
         cursor: pointer;
+        transition: background-color 140ms ease, transform 140ms ease;
       }
 
       .button:hover {
         background: var(--primary-strong);
+        transform: translateY(-1px);
       }
 
       .button.secondary {
-        background: #eef2ff;
-        border-color: #c7d2fe;
-        color: #1e3a8a;
+        background: #eff6ff;
+        border-color: #bfdbfe;
+        color: #1d4ed8;
       }
 
       .field {
         margin-top: 16px;
       }
 
+      .guide-block {
+        margin-top: 18px;
+        padding: 16px 18px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.82);
+      }
+
+      .guide-block h3 {
+        margin: 0 0 10px;
+        font-size: 16px;
+      }
+
       .field label {
         display: block;
         margin-bottom: 8px;
-        font-weight: 600;
+        font-size: 14px;
+        font-weight: 700;
       }
 
       textarea,
       input[type="text"] {
         width: 100%;
-        padding: 12px 14px;
+        padding: 13px 14px;
         border: 1px solid var(--border);
-        border-radius: 10px;
+        border-radius: 12px;
         background: #fff;
         color: var(--text);
         font: inherit;
+      }
+
+      textarea {
+        min-height: 180px;
+        resize: vertical;
       }
 
       code {
         font-family: Consolas, "Courier New", monospace;
       }
 
-      .hint {
+      ol {
+        margin: 0;
+        padding-left: 20px;
+      }
+
+      .note {
+        margin-top: 16px;
         font-size: 14px;
       }
 
-      .credit {
-        margin-top: 20px;
+      .footer {
+        margin-top: 18px;
         font-size: 13px;
         color: #7a8797;
-        text-align: right;
       }
     </style>
   </head>
   <body>
     <main>
-      <section class="panel">
-        <h1>스마틱스 UI 도우미</h1>
-        <p>
-          호스트 프로젝트를 수정하지 않고 로컬 웹 페이지에 <code>agent-ui-annotation</code> 툴바를 주입할 수 있는
-          내부 전용 독립 도구입니다.
+      <section class="hero">
+        <span class="eyebrow">스마틱스 UI Agentation</span>
+        <h1>새로고침 후에도 annotation 툴바를 다시 붙입니다.</h1>
+        <p class="lead">
+          북마클릿이나 콘솔 붙여넣기는 한 번만 주입되는 방식이라 새로고침하면 사라집니다.
+          <br />
+          <code>agent-ui-annotation</code>을 페이지가 열릴 때마다 다시 주입하는 지속형 사용자 스크립트 설치
+          흐름을 제공합니다.
         </p>
+      </section>
 
-        <ol>
-          <li>이 도구를 로컬에서 실행합니다.</li>
-          <dl>[npm i 실행 후 npm run dev 실행]</dl>
-          <li>아래 북마클릿복사 또는 Inject URL을 복사합니다.</li>
-          <li>사용하고 싶은 싶은 로컬 웹 페이지를 엽니다.</li>
-          <li>개발자도구(F12)를 열고 콘솔로그에 북마클릿에서 복사된 코드를 실행합니다.</li>
-          <dl>[콘솔로그에 입력이 안되면 "붙여넣기 허용" 입력]</dl>
-        </ol>
+      <section class="grid">
+        <article class="panel recommended">
+          <span class="badge">권장 방식</span>
+          <h2>지속형 사용자 스크립트</h2>
+          <p>
+            생성된 사용자 스크립트를 Tampermonkey 또는 Violentmonkey에 등록하세요. 한 번 설치하면 로컬 개발
+            서버가 켜져 있는 동안 페이지를 새로고침할 때마다 사이드카가 자동으로 다시 로드됩니다.
+          </p>
 
-        <div class="actions">
-          <a id="bookmarklet-link" class="button" href="#">북마클릿</a>
-          <button id="copy-bookmarklet" class="button secondary" type="button">북마클릿 복사</button>
-          <button id="copy-url" class="button secondary" type="button">Inject URL 복사</button>
-        </div>
+          <div class="guide-block">
+            <h3>사전 준비</h3>
+            <ol>
+              <li>Tampermonkey 확장프로그램을 다운로드합니다.</li>
+              <li>
+                Tampermonkey 확장프로그램의 <code>세부정보</code>에서 <code>사용자 스크립트 허용</code>을
+                선택해 활성화합니다.
+              </li>
+              <li>크롬, 엣지 등의 브라우저를 재시작합니다.</li>
+            </ol>
+          </div>
 
-        <div class="field">
-          <label for="inject-url">Inject URL</label>
-          <input id="inject-url" type="text" readonly />
-        </div>
+          <div class="guide-block">
+            <h3>Tampermonkey 설정 방법</h3>
+            <ol>
+              <li>확장프로그램의 <code>대시보드</code>로 이동합니다.</li>
+              <li><code>+</code> 버튼을 눌러 새 스크립트를 열고 아래 사용자 스크립트 코드를 복사해서 붙여넣습니다.</li>
+              <li>
+                또는 <code>도구</code>를 클릭한 뒤 <code>.user.js</code>를 다운로드해서 가져오기할 수
+                있습니다.
+              </li>
+            </ol>
+          </div>
 
-        <div class="field">
-          <label for="bookmarklet-code">북마클릿 코드</label>
-          <textarea id="bookmarklet-code" rows="6" readonly></textarea>
-        </div>
+          <div class="guide-block">
+            <h3>실행 순서</h3>
+            <ol>
+              <li>처음 한 번 <code>npm install</code>을 실행한 뒤 <code>npm run dev</code>를 실행합니다.</li>
+              <li>아래 사용자 스크립트를 복사하거나 <code>.user.js</code> 파일을 다운로드합니다.</li>
+              <li>위 방법으로 Tampermonkey에 등록합니다.</li>
+              <li>대상 페이지를 새로고침하면 툴바가 자동으로 다시 나타납니다.</li>
+            </ol>
+          </div>
 
-        <p class="hint">
-          CSP가 강한 페이지는 외부 module script 주입을 차단할 수 있습니다. 이 경우 해당 페이지에서는 툴바가
-          로드되지 않을 수 있습니다.
-        </p>
+          <div class="actions">
+            <button id="copy-userscript" class="button" type="button">사용자 스크립트 복사</button>
+            <a id="download-userscript" class="button secondary" download="agent-ui-sidecar.user.js" href="#"
+              >.user.js 다운로드</a
+            >
+            <button id="copy-url" class="button secondary" type="button">Inject URL 복사</button>
+          </div>
 
-        <p class="credit">made by hajune</p>
+          <div class="field">
+            <label for="inject-url">Inject URL</label>
+            <input id="inject-url" type="text" readonly />
+          </div>
+
+          <div class="field">
+            <label for="userscript-code">사용자 스크립트 코드</label>
+            <textarea id="userscript-code" readonly></textarea>
+          </div>
+        </article>
+
+        <article class="panel">
+          <h2>1회성 북마클릿</h2>
+          <p>
+            빠르게 임시 주입이 필요할 때는 기존 북마클릿도 계속 사용할 수 있습니다. 브라우저 확장을 설치하고 싶지
+            않을 때는 유용하지만, 전체 새로고침 뒤에는 유지되지 않습니다.
+          </p>
+
+          <div class="actions">
+            <a id="bookmarklet-link" class="button" href="#">북마클릿 실행</a>
+            <button id="copy-bookmarklet" class="button secondary" type="button">북마클릿 복사</button>
+          </div>
+
+          <div class="field">
+            <label for="bookmarklet-code">북마클릿 코드</label>
+            <textarea id="bookmarklet-code" readonly></textarea>
+          </div>
+
+          <p class="note">
+            CSP가 강한 페이지는 외부 module script 주입을 막을 수 있습니다. 그 경우 이 방식으로는 사이드카가
+            로드되지 않을 수 있습니다.
+          </p>
+
+          <p class="footer">made by hajune</p>
+        </article>
       </section>
     </main>
   </body>

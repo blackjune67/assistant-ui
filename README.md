@@ -1,13 +1,18 @@
-# 스마틱스 UI 도우미
+# Agent UI Sidecar
 
-호스트 프로젝트를 수정하지 않고 로컬 웹 애플리케이션에 `agent-ui-annotation`을 주입하는 내부 전용 독립 도구입니다.
+This project injects `agent-ui-annotation` into any locally opened page without modifying the target project itself.
 
-## 요구사항
+The original bookmarklet flow still exists for one-shot injection, but the preferred path is now a persistent
+userscript install. A userscript can re-inject the sidecar after every page refresh, which a bookmarklet or console
+paste cannot do by themselves.
 
-- Node.js 20 이상
-- 북마클릿 실행이 가능한 브라우저
+## Requirements
 
-## 사용 방법
+- Node.js 20 or newer
+- A browser that can run bookmarklets
+- Tampermonkey or Violentmonkey for persistent auto-reload injection
+
+## Local run
 
 ```bash
 cd ..\agent-ui-sidecar
@@ -15,20 +20,30 @@ npm install
 npm run dev
 ```
 
-실행 후 다음 순서로 사용합니다.
+Open `http://127.0.0.1:4174` after the dev server starts.
 
-1. `http://127.0.0.1:4174`를 엽니다.
-2. 북마클릿을 복사합니다.
-3. 주석을 남기고 싶은 로컬 웹 페이지를 엽니다.
-4. 북마클릿을 실행해 annotation 툴바를 주입합니다.
+## Recommended flow: persistent userscript
 
-## 참고
+1. Install Tampermonkey or Violentmonkey in your browser.
+2. Open the sidecar page and copy or download the generated userscript.
+3. Create a new userscript in the extension and paste the generated code.
+4. Keep `npm run dev` running.
+5. Refresh your target page. The sidecar should reappear automatically on every full reload.
 
-- 이 도구는 로컬 개발 환경 전용입니다.
-- 호스트 프로젝트에는 `npm`이나 코드 수정이 필요하지 않습니다.
-- 주입된 툴바는 annotation context에 `route`, `url`, `title`, `timestamp`를 추가합니다.
-- CSP가 강한 페이지는 외부 module script 주입을 차단할 수 있어 툴바가 로드되지 않을 수 있습니다.
+## Optional flow: one-shot bookmarklet
 
-## 제작
+1. Copy the bookmarklet code from the sidecar page.
+2. Paste it into the browser console or save it as a bookmarklet.
+3. Run it on the target page when you need a temporary injection.
 
-- made in hajune
+This flow is convenient for quick tests, but it resets after a full page reload.
+
+## Notes
+
+- This tool is intended for local development environments.
+- The injected annotation context still includes `route`, `url`, `title`, and `timestamp`.
+- Pages with a strict CSP can block module script injection, which prevents the toolbar from loading.
+
+## Credit
+
+- made by hajune
