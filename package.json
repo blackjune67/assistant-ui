@@ -9,6 +9,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@chenglou/pretext": "^0.0.4",
     "agent-ui-annotation": "^0.7.0"
   },
   "devDependencies": {

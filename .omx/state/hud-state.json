@@ -1,5 +1,5 @@
 {
-  "last_turn_at": "2026-04-03T11:46:58.890Z",
-  "turn_count": 13,
-  "last_agent_output": "[index.html](/d:/Repository/agent-ui-sidecar/index.html) 내용을 다시 복구했습니다. 빠졌던 `사전 준비`, `Tampermonkey 설"
+  "last_turn_at": "2026-04-03T16:19:02.900Z",
+  "turn_count": 22,
+  "last_agent_output": "버튼 클릭 이펙트를 `github-link`처럼 보이는 캔버스 기반 폭발 효과로 바꿨습니다. 이제 모든 `.button`은 클릭 위치에서 바로 터지는 느낌의 파티클 + 쇼크웨이브 "
 }
