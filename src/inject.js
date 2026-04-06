@@ -1,5 +1,10 @@
 import 'agent-ui-annotation';
 import { buildPageContext } from './lib/context.js';
+import {
+  applyStoredToolbarVisibility,
+  waitForRenderedToolbar,
+  watchToolbarVisibility
+} from './lib/toolbar-visibility.js';
 
 const TOOLBAR_ID = 'agent-ui-annotation-sidecar';
 
@@ -35,9 +40,10 @@ async function activateToolbar() {
     }));
   }
 
-  if (typeof toolbar.activate === 'function') {
-    toolbar.activate();
-  }
+  await waitForRenderedToolbar(toolbar);
+
+  applyStoredToolbarVisibility(toolbar, window.sessionStorage);
+  watchToolbarVisibility(toolbar, window.sessionStorage);
 
   window.__agentUiAnnotationSidecar = toolbar;
   console.info('[agent-ui-sidecar] annotation toolbar injected');

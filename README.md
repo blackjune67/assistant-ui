@@ -29,6 +29,7 @@ Open `http://127.0.0.1:4174` after the dev server starts.
 3. Create a new userscript in the extension and paste the generated code.
 4. Keep `npm run dev` running.
 5. Refresh your target page. The sidecar should reappear automatically on every full reload.
+6. If you close the toolbar, it now stays closed across refreshes and same-tab navigation until that browser tab is fully closed.
 
 ## Optional flow: one-shot bookmarklet
 
@@ -43,6 +44,7 @@ This flow is convenient for quick tests, but it resets after a full page reload.
 - This tool is intended for local development environments.
 - The injected annotation context still includes `route`, `url`, `title`, and `timestamp`.
 - Pages with a strict CSP can block module script injection, which prevents the toolbar from loading.
+- In the userscript flow, toolbar open/closed state is stored in `sessionStorage`, so closing it is temporary to the current tab session.
 
 ## Credit
 
